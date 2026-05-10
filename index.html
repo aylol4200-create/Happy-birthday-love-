@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Birthday Story 💖</title>
+
+<style>
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:Arial;
+background:linear-gradient(135deg,#0f0c29,#302b63,#ff6a88);
+color:white;
+overflow:hidden;
+}
+
+.box{
+width:90%;
+max-width:550px;
+text-align:center;
+background:rgba(255,255,255,0.08);
+padding:25px;
+border-radius:25px;
+backdrop-filter:blur(12px);
+box-shadow:0 0 30px rgba(0,0,0,0.4);
+}
+
+button{
+padding:12px 20px;
+margin-top:10px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:white;
+font-size:16px;
+transition:0.3s;
+}
+
+button:hover{transform:scale(1.05)}
+
+.option{display:block;width:100%;margin:8px 0}
+
+.shake{animation:shake 0.3s infinite}
+
+@keyframes shake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-5px)}
+50%{transform:translateX(5px)}
+75%{transform:translateX(-5px)}
+100%{transform:translateX(0)}
+}
+
+/* 💖 hearts */
+.heart{
+position:fixed;
+color:pink;
+font-size:20px;
+animation:float 4s linear infinite;
+top:100%;
+}
+
+@keyframes float{
+0%{transform:translateY(0);opacity:1}
+100%{transform:translateY(-120vh);opacity:0}
+}
+
+.fadeIn{animation:fadeIn 1s ease}
+
+@keyframes fadeIn{
+from{opacity:0;transform:scale(0.9)}
+to{opacity:1;transform:scale(1)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="app"></div>
+
+<script>
+let step=0;
+let qIndex=0;
+let score=0;
+
+/* QUESTIONS */
+const questions=[
+{q:"مين هو المغني اللي انا بحبه؟",options:["Billie Eilish","Justin Bieber","James Arthur","Camila Cabello"],a:"Justin Bieber"},
+{q:"مين الشخصيه الروائية المفضله عندي؟",options:["William","Alex","DJN","Anderas"],a:"DJN"},
+{q:"ايه هو لقبي الفلكي؟",options:["نجمة اغسطس","حورية مارس","حلوى أبريل","ملاك يناير"],a:"نجمة اغسطس"},
+{q:"احبك لما تقول لي ؟",options:["أعشقنك","أموت عليك","تدللين","أحبنك"],a:"أحبنك"}
+];
+
+/* 💖 hearts */
+function hearts(){
+setInterval(()=>{
+let h=document.createElement("div");
+h.className="heart";
+h.innerHTML="💖";
+h.style.left=Math.random()*100+"%";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),4000);
+},400);
+}
+hearts();
+
+/* TYPE EFFECT */
+function typeText(text,cb){
+let i=0;
+let el=document.getElementById("typing");
+
+let t=setInterval(()=>{
+el.innerHTML=text.substring(0,i);
+i++;
+if(i>text.length){
+clearInterval(t);
+setTimeout(cb,1000);
+}
+},50);
+}
+
+/* GAME 2 */
+function next2(){
+step=15;
+render();
+}
+
+/* MUSIC */
+function playSong(){
+let a=document.getElementById("bgSong");
+if(a){a.play().catch(()=>{});}
+}
+
+/* QUIZ ANSWER */
+function answer(opt){
+let q=questions[qIndex];
+if(opt===q.a) score++;
+qIndex++;
+if(qIndex>=questions.length) step=7;
+else step=6;
+render();
+}
+
+/* RENDER */
+function render(){
+let app=document.getElementById("app");
+app.innerHTML="";
+
+/* 1 */
+if(step===0){
+app.innerHTML=`
+<h2>🎂 Today is your birthday right?</h2>
+<button onclick="step=1;render()">yes</button>
+`;
+}
+
+/* 2 YES RUN */
+else if(step===1){
+app.innerHTML=`
+<h2>💘 do you love me?</h2>
+
+<button onclick="step=2;render()">yes</button>
+<button id="noBtn">no</button>
+`;
+
+let no=document.getElementById("noBtn");
+
+no.onclick=()=>{
+no.classList.add("shake");
+setTimeout(()=>no.classList.remove("shake"),600);
+};
+}
+
+/* 3 */
+else if(step===2){
+app.innerHTML=`
+<h2>😏 I'll show you something</h2>
+<button onclick="step=3;render()">show me</button>
+`;
+}
+
+/* 4 cinematic */
+else if(step===3){
+app.innerHTML=`
+<h2 class="fadeIn">⏳ wait a moment...</h2>
+<p>something special is coming 💖</p>
+`;
+
+setTimeout(()=>{
+step=3.5;
+render();
+},3000);
+}
+
+/* 5 VIDEO */
+else if(step===3.5){
+app.innerHTML=`
+<h3>🎬 Message from Billie!</h3>
+
+<audio autoplay>
+<source src="heartbeat.mp3">
+</audio>
+
+<video width="100%" controls>
+<source src="video.mp4">
+</video>
+
+<audio id="bgSong">
+<source src="song.mp3">
+</audio>
+
+<button onclick="step=4;render(); playSong()">
+Continue
+</button>
+`;
+}
+
+/* 6 MESSAGE */
+else if(step===4){
+app.innerHTML=`
+<h2>💌 Birthday Message</h2>
+<p>🎉 كل سنة وانت طيب</p>
+<p>💖 بحبك مووت</p>
+<p>💋 وجودك مهم جدًا</p>
+
+<button onclick="step=5;render()">next</button>
+`;
+}
+
+/* 7 GAME 1 */
+else if(step===5){
+app.innerHTML=`
+<h2>🎮 Game Time!</h2>
+<p>هنشوف انت عارفني قد إيه 😏</p>
+<button onclick="step=6;render()">start</button>
+`;
+}
+
+/* 8 QUIZ */
+else if(step===6){
+let q=questions[qIndex];
+
+app.innerHTML=`
+<h3>⭐ Score: ${score}</h3>
+<h2>${q.q}</h2>
+
+${q.options.map(o=>`
+<button class="option" onclick="answer('${o}')">${o}</button>
+`).join("")}
+`;
+}
+
+/* 9 VICTORY */
+else if(step===7){
+app.innerHTML=`
+<h1>🎉 VICTORY 🎉</h1>
+
+<p>🔥 برافو عليك</p>
+<p>💖 فخورة بيك جدًا</p>
+<p>💋 بحبكككككك</p>
+
+<audio autoplay>
+<source src="applause.mp3">
+</audio>
+
+<button onclick="step=8;render()">continue</button>
+`;
+}
+
+/* 10 LOVE */
+else if(step===8){
+app.innerHTML=`
+<h2>💖 بتحبني؟</h2>
+
+<button onclick="step=9;render()">طبعًا يا حياتي</button>
+<button onclick="step=9;render()">أيوه</button>
+`;
+}
+
+/* 11 WHY */
+else if(step===9){
+app.innerHTML=`
+<h2>💞 ليه بتحبني؟</h2>
+
+<textarea style="width:100%;height:80px;border-radius:10px;padding:10px"></textarea>
+
+<button onclick="step=10;render()">finish</button>
+`;
+}
+
+/* 12 END → STOP HIM */
+else if(step===10){
+app.innerHTML=`
+<h1 class="fadeIn">💖 النهاية</h1>
+
+<p>استنى...</p>
+<button onclick="step=11;render()">next</button>
+`;
+}
+
+/* 😏 STOP */
+else if(step===11){
+app.innerHTML=`
+<h2>😏 استنى استنى</h2>
+<p>رايح فين؟ لسه فيه لعب 😌</p>
+
+<button onclick="step=12;render()">ماشي</button>
+`;
+}
+
+/* typing */
+else if(step===12){
+app.innerHTML=`<h2 id="typing"></h2>`;
+
+typeText("طيب بما إنك لسه هنا... عندي لعبتين كمان 😌",()=>{
+step=13;
+render();
+});
+}
+
+/* GAME 2 */
+else if(step===13){
+app.innerHTML=`
+<h2>🎮 لعبة 2</h2>
+<p>جاهز؟ 😏</p>
+<button onclick="step=14;render()">ابدأ</button>
+`;
+}
+
+/* Q2 */
+else if(step===14){
+app.innerHTML=`
+<h2>💖 أنا بالنسبة لك إيه؟</h2>
+
+<button onclick="next2()">كل حاجة</button>
+<button onclick="next2()">حب حياتي</button>
+<button onclick="next2()">مجنونة بس بحبها</button>
+<button onclick="next2()">مش عارف</button>
+`;
+}
+
+/* typing 2 */
+else if(step===15){
+app.innerHTML=`<h2 id="typing"></h2>`;
+
+typeText("الإجابة دي حلوة 😌... بس لسه في لعبة أخيرة 👀",()=>{
+step=16;
+render();
+});
+}
+
+/* FINAL GAME */
+else if(step===16){
+app.innerHTML=`
+<h2>🎮 لعبة أخيرة</h2>
+<button onclick="step=17;render()">ابدأ</button>
+`;
+}
+
+/* FINAL Q */
+else if(step===17){
+app.innerHTML=`
+<h2>💘 هتفضل جمبي؟</h2>
+
+<button onclick="step=18;render()">أكيد 💖</button>
+<button onclick="step=18;render()">طبعًا</button>
+`;
+}
+
+/* END */
+else if(step===18){
+app.innerHTML=`
+<h1>💖 النهاية الحقيقية</h1>
+<p>أنا كده أطمنت عليك 😌</p>
+<p>وكل سنة وانت رفيق عمري وسندي وحبيبي يا احلى حته سكرههه 💫</p>
+`;
+}
+
+}
+
+render();
+</script>
+
+</body>
+</html>
